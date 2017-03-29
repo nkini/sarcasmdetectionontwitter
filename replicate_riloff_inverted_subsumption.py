@@ -46,8 +46,9 @@ all_discards = {'pos':set(),'neg':set()}
 
 def bootstrap(seedword,tweets):
     '''
-    Input: A seed positive word and a set of tweets
+    Input: A seed positive phrase in the form of a tuple and an iterable of tweetobjects
     Output: A set of positive sentiments and negative situations that indicate a possibly sarcastic tweet
+    e.g. call: bootsrap(tuple('really','excited'), [{'tokens':['Hi','sweety'],'tags':['!','N']}]
     '''
 
     old_pos = set()
