@@ -77,7 +77,6 @@ def bootstrap(seedword,tweets):
             for tup in new_phrases:
                 print('\t{}'.format(' '.join(tup)))
 
-
         old_pos = pos_verbs
         new_pos = []
         new_pos.extend(learn_new_phrases(neg_phrases,'pos',tweets))
@@ -97,23 +96,23 @@ def bootstrap(seedword,tweets):
         epoch += 1
         print("\n")
 
-    return {'pos':pos_verbs, 'neg':neg_phrases, 'pospred': None}
+    return {'pos':{' '.join(verbphrase) for verbphrase in pos_verbs}, 'neg':{' '.join(negphrase) for negphrase in neg_phrases}, 'pospred': None}
 
 def clean_and_add(newset,oldset):
 
     discard_pile = set()
     combo = newset | oldset
-    combo_old = combo
-    combo = sort_by_len(combo)
-    keys = sorted(combo.keys(),reverse=True)
+    #combo_old = combo
+    combo_sorted = sort_by_len(combo)
+    keys = sorted(combo_sorted.keys(),reverse=True)
 
     for i,k1 in enumerate(keys[:-1]):
-        for big in combo[k1]:
+        for big in combo_sorted[k1]:
             big = ' '.join(big)
-            if is_subsumed(big,combo,keys,i):
+            if is_subsumed(big,combo_sorted,keys,i):
                 discard_pile.add(tuple(big.split()))
 
-    res = combo_old - discard_pile
+    res = combo - discard_pile
 
     return res
 
