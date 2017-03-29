@@ -99,40 +99,37 @@ def bootstrap(seedword,tweets):
 
     return {'pos':pos_verbs, 'neg':neg_phrases, 'pospred': None}
 
+def clean_and_add(newset,oldset):
+
+    discard_pile = set()
+    combo = newset | oldset
+    combo_old = combo
+    combo = sort_by_len(combo)
+    keys = sorted(combo.keys(),reverse=True)
+
+    for i,k1 in enumerate(keys[:-1]):
+        for big in combo[k1]:
+            big = ' '.join(big)
+            if is_subsumed(big,combo,keys,i):
+                discard_pile.add(tuple(big.split()))
+
+    res = combo_old - discard_pile
+
+    return res
+
+def is_subsumed(bigphrase,dict_of_tuples,keys,i):
+    for k2 in keys[i+1:]:
+        for small in dict_of_tuples[k2]:
+            small = ' '.join(small)
+            if small in bigphrase:
+                return True
+    return False
 
 def sort_by_len(set_of_tuples):
     res = defaultdict(set)
     for tup in set_of_tuples:
         res[len(tup)].add(tup)
     return res
-
-
-def clean_and_add(newset,oldset):
-    
-    discard_pile = set()
-    combo = newset | oldset
-    combo_old = combo
-    combo = sort_by_len(combo)
-    keys = sorted(combo.keys())
-
-    for i,k1 in enumerate(keys[:-1]):
-        for small in combo[k1]:
-            small = ' '.join(small)
-            if is_subsumed(small,combo,keys,i):
-                discard_pile.add(tuple(small.split()))
-                
-    res = combo_old - discard_pile       
-
-    return res
-
-def is_subsumed(word,dict_of_tuples,keys,i): 
-    for k2 in keys[i+1:]:
-        for big in dict_of_tuples[k2]:
-            big = ' '.join(big)
-            if word in big:
-                return True
-    return False
-
 
 def learn_new_phrases(phrases,pos_or_neg,tweets):
 
